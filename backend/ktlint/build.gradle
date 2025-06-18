@@ -39,6 +39,6 @@ dependencies {
     ktlint sourceSets.main.output
 }
 
-test {
+tasks.named('test', Test) {
     useJUnitPlatform()
 }
