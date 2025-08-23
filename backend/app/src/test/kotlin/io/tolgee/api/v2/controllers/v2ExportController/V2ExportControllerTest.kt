@@ -364,16 +364,16 @@ class V2ExportControllerTest : ProjectAuthControllerTest("/v2/projects/") {
       val firstResponse = performProjectAuthGet("export?languages=en&zip=false")
         .andIsOk
         .andReturn()
-      
+
       val lastModifiedHeader = firstResponse.response.getHeaderValue("Last-Modified") as String
       Assertions.assertThat(lastModifiedHeader).isNotNull()
-      
+
       // Second request with If-Modified-Since header - should return 304
       val headers = org.springframework.http.HttpHeaders()
       headers["If-Modified-Since"] = lastModifiedHeader
       headers["x-api-key"] = apiKeyService.create(userAccount!!, scopes = setOf(Scope.TRANSLATIONS_VIEW), project).key
       val secondResponse = performGet("/v2/projects/${project.id}/export?languages=en&zip=false", headers).andReturn()
-      
+
       Assertions.assertThat(secondResponse.response.status).isEqualTo(304)
       Assertions.assertThat(secondResponse.response.contentAsByteArray).isEmpty()
       Assertions.assertThat(secondResponse.response.contentAsString).isEmpty()
@@ -391,15 +391,22 @@ class V2ExportControllerTest : ProjectAuthControllerTest("/v2/projects/") {
       val firstResponse = performProjectAuthPost("export", mapOf("languages" to setOf("en"), "zip" to false))
         .andIsOk
         .andReturn()
-      
+
       val lastModifiedHeader = firstResponse.response.getHeaderValue("Last-Modified") as String
       Assertions.assertThat(lastModifiedHeader).isNotNull()
-      
+
       // Second request with If-Modified-Since header - should return 304
       val headers = org.springframework.http.HttpHeaders()
       headers["If-Modified-Since"] = lastModifiedHeader
       headers["x-api-key"] = apiKeyService.create(userAccount!!, scopes = setOf(Scope.TRANSLATIONS_VIEW), project).key
-      val secondResponse = performPost("/v2/projects/${project.id}/export", mapOf("languages" to setOf("en"), "zip" to false), headers).andReturn()
+      val secondResponse = performPost(
+        "/v2/projects/${project.id}/export",
+        mapOf(
+          "languages" to setOf("en"),
+        "zip" to false
+        ),
+          headers
+      ).andReturn()
 
       // Since this is POST request Spring returns 412 as it is according to the spec for modifying methods.
       // In our case, we are using POST only since we cannot provide all the params in the query.

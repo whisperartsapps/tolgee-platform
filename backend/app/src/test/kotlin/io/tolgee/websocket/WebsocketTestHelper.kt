@@ -129,7 +129,6 @@ class WebsocketTestHelper(val port: Int?, val auth: Auth, val projectId: Long, v
         (o as? ByteArray)?.decodeToString(),
       )
 
-
       if (o !is ByteArray) {
         logger.info("Payload '{}' is not a ByteArray, not adding into received messages.", o)
         return
@@ -182,7 +181,6 @@ class WebsocketTestHelper(val port: Int?, val auth: Auth, val projectId: Long, v
       sessionHandler?.unauthenticated ?: true
     }
   }
-
 
   data class Auth(val jwtToken: String? = null, val apiKey: String? = null) {
     init {
